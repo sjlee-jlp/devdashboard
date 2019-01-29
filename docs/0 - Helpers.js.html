@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: 0 - Helpers.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: 0 - Helpers.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Meta
+ * @file Contains helper scripts and global variables
+ * @author Simon Lee &lt;simon.lee@johnlewis.co.uk>
+ * @version 1.0
+ * @module 0 - Helpers
+ */
+
+/**
+ * Global Variable used to get the ID of the spreadsheet
+ * @var {String} id
+ */
+var id = '1DfPKGYr7jejeybPHUbdNg9sPhV66K-M1wz4TLHCaRP0';
+/**
+ * Global Variable used to open the spreadsheet
+ * @var {object} masterSS
+ */
+var masterSS = id ?
+  SpreadsheetApp.openById(id)
+  : SpreadsheetApp.getActiveSpreadsheet();
+/**
+   * Global Variable used to get the the spreadsheet for the Current Week
+   * @var {object} cwSheet
+   */
+var cwSheet = masterSS.getSheetByName('Current Week');
+/**
+   * Global Variable used to get the the spreadsheet used for archiving
+   * @var {object} archiveSheet
+   */
+var archiveSheet = masterSS.getSheetByName('Archive');
+
+/**
+ * Used to clear the content from Columns K - M in the Current Week Sheet.
+ * This will clear content from all rows starting at row 2
+ * (avoiding the headers), from column 11 (K) for the next 3 columns (ending at M)
+ *
+ * @author Simon Lee &lt;simon.lee@johnlewis.co.uk>
+ * @example &lt;caption>Example usage of clearContent_()&lt;/caption>
+ * clearContent_()
+ */
+function clearContent_() {
+  var lastRow = cwSheet.getLastRow();
+  var lastCol = cwSheet.getLastColumn();
+  /** Gets the range to clear on the sheet starting at row 2 (avoiding the headers), at column 11 (Column K), for lastRow-1 rows (they are 0 indexed so need the -1) for 3 columns (so we are clearing columns K-M)*/
+  var contentRange = cwSheet.getRange(2, 11, lastRow - 1, 3);
+  contentRange.clear();
+  /** Makes sure the sheet is updated*/
+  SpreadsheetApp.flush();
+}
+
+/**
+ * Used to calculate the difference between 2 dates
+ *
+ * @example &lt;&lt;caption>>Example usage of dateDiff_()&lt;/caption>
+ * // returns 14
+ * var datea = new Date ("Tue Jan 01,2019")
+ * var dateb = new Date ("Tue Jan 15,2019")
+ * dateDiff_(datea, dateb)
+ * @param {Object} date1 - Input Date
+ * @param {Object} date2 - Input Date
+ */
+function dateDiff_(date1, date2) {
+  return Math.floor(
+    (Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) -
+      Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate())) /
+      (1000 * 60 * 60 * 24)
+  );
+}
+
+/**
+ * Creates the Menu UI
+ *
+ */
+function onOpen() {
+  var menu = [
+    {
+      name: 'Help and Support',
+      functionName: 'help_'
+    },
+    null,
+    {
+      name: 'Authorise',
+      functionName: 'init_'
+    },
+    null,
+    {
+      name: 'View Archive',
+      functionName: 'viewArchive_'
+    },
+    {
+      name: 'Hide Archive',
+      functionName: 'hideArchive_'
+    },
+    {
+      name: 'Manual Archive',
+      functionName: 'snapshot_'
+    },
+    null,
+    {
+      name: 'Uninstall / Stop',
+      functionName: 'reset_'
+    }
+  ];
+  SpreadsheetApp.getActiveSpreadsheet().addMenu('Configuration and Help', menu);
+}
+
+/**
+ * Opens the Archive sheet
+ *
+ */
+function viewArchive_() {
+  if (archiveSheet.isSheetHidden()) {
+    archiveSheet.showSheet();
+    archiveSheet.activate();
+    SpreadsheetApp.flush();
+  } else {
+    archiveSheet.activate();
+    SpreadsheetApp.flush();
+  }
+}
+
+/**
+ * Hides the Archive sheet
+ *
+ */
+function hideArchive_() {
+  if (!archiveSheet.isSheetHidden()) {
+    archiveSheet.hideSheet();
+    SpreadsheetApp.flush();
+  } else {
+    SpreadsheetApp.getActive().toast(
+      'The sheet is already hidden',
+      'Status',
+      5
+    );
+    SpreadsheetApp.flush();
+  }
+}
+
+/**
+ * Opens the Help Box
+ *
+ */
+function help_() {
+  var html = HtmlService.createHtmlOutputFromFile('Support')
+    .setTitle('Google Scripts Support')
+    .setWidth(370)
+    .setHeight(140);
+  var activeSheet = SpreadsheetApp.getActive();
+  activeSheet.show(html);
+}
+
+/**
+ * Used to prompt the user to grant authorisation to the script
+ *
+ */
+function init_() {
+  SpreadsheetApp.getActive().toast(
+    'The program is now initialised',
+    'Status',
+    10
+  );
+}
+
+/**
+ * Resets any currently configured triggers
+ *
+ */
+function reset_(e) {
+  var triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(function(trigger) {
+    ScriptApp.deleteTrigger(trigger);
+  });
+  if (!e) {
+    ScriptApp.newTrigger('onOpen')
+      .forSpreadsheet(id)
+      .onOpen()
+      .create();
+    SpreadsheetApp.getActive().toast(
+      'The script is no longer active. You can re-initialise anytime later.',
+      'Status',
+      -1
+    );
+  }
+}
+
+/**
+ * Builds an email address from a string
+ *
+ * @author Simon Lee &lt;simon.lee@johnlewis.co.uk>
+ * @example &lt;&lt;caption>Example usage of buildMailAddress_()&lt;/caption>
+ * // returns john.lewis@johnlewis.co.uk
+ * buildMailAddress_("John Lewis")
+ * @param {String} user The users first name and last name
+ * @return {string} Returns the email address for the user
+ */
+function buildMailAddress_(user) {
+  var fullName = user.toString().toLowerCase();
+  var nameSplit = fullName.split(' ');
+  var firstName = nameSplit[0];
+  var lastName = nameSplit[1];
+  return firstName + '.' + lastName + '@johnlewis.co.uk';
+}
+
+/**
+ * Used to map the rows parsed for the function sendAlert
+ *
+ * @param {object} row The row from the Spreadsheet
+ * @returns {object} Returns the user, emailAddress, project name and due date from the passed row
+ */
+function rowMapper_(row) {
+  var user = row[0];
+  if (
+    row[0] !== '' &amp;&amp;
+    row[0] !== 'Unassigned' &amp;&amp;
+    row[0] !== 'Proof of Concept'
+  ) {
+    return {
+      user: row[0],
+      emailAddress: buildMailAddress_(user),
+      projectName: row[3],
+      dueDate: row[8]
+    };
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-0%2520-%2520Helpers.html">0 - Helpers</a></li><li><a href="module-1%2520-%2520Snapshot.html">1 - Snapshot</a></li><li><a href="module-2%2520-%2520Mail%2520Alert.html">2 - Mail Alert</a></li><li><a href="module-3%2520-%2520Old%2520Code.html">3 - Old Code</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jan 29 2019 09:35:21 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

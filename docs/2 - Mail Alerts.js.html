@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: 2 - Mail Alerts.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: 2 - Mail Alerts.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Meta
+ * @file Sends emails when projects are due / overdue
+ * @author Simon Lee &lt;simon.lee@johnlewis.co.uk>
+ * @version 1.0
+ * @module 2 - Mail Alert
+ */
+
+/**
+ * Creates an email alert and sends it to the user at the start of the week
+ * Will send 2 seperate alerts, 1 for due projects 1 for overdue projects
+ *
+ */
+function sendAlert() {
+  var data = cwSheet.getDataRange().getValues();
+  processRows_(data);
+}
+
+/**
+ * Processes the data obtained from the Spreadsheet and sends the emails
+ *
+ * @author Simon Lee &lt;simon.lee@johnlewis.co.uk>
+ * @example &lt;&lt;caption>>Example usage of processRows_()&lt;/caption>
+ * var data = cwSheet.getDataRange().getValues();
+ * processRows_(data);
+ * @param {object} data The values obtained from the Spreadsheet
+ * @property {number} warningDays The number of days before the project is due to send a warning
+ * @property {string} dueBody The core body of the HTML email sent when projects are due
+ * @property {string} overdueBody The core body of the HTML email sent when projects are overdue
+ * @property {string} dueSubject The subject used when sending an email to notify that there are projects due
+ * @property {string} overdueSubject The subject used when sending an email to notify that there are projects overdue
+ */
+function processRows_(data) {
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  var warningDays = 14;
+  var rowObjects = data.slice(1).map(rowMapper_);
+  var ccUser = 'mark.adams@johnlewis.co.uk';
+  var dueBody =
+    '&lt;html>' +
+    '&lt;h1>Project Report&lt;/h1>' +
+    '&lt;h2>The following projects are due:&lt;/h2>' +
+    '&lt;table cellpadding=\'10\'>' +
+    '&lt;tbody>' +
+    '&lt;tr>' +
+    '&lt;td>&lt;strong>Project&lt;/strong>&lt;/td>' +
+    '&lt;td>&lt;strong>Due Date&lt;/strong>&lt;/td>' +
+    '&lt;/tr>';
+  var overdueBody =
+    '&lt;html>' +
+    '&lt;h1>Project Report&lt;/h1>' +
+    '&lt;h2>The following projects are overdue:&lt;/h2>' +
+    '&lt;table cellpadding=\'10\'>' +
+    '&lt;tbody>' +
+    '&lt;tr>' +
+    '&lt;td>&lt;strong>Project&lt;/strong>&lt;/td>' +
+    '&lt;td>&lt;strong>Due Date&lt;/strong>&lt;/td>' +
+    '&lt;/tr>';
+  var htmlClose = '&lt;/html>';
+  var dueSubject = 'Upcoming Project Deadlines';
+  var overdueSubject = 'Notification of Breached Deadlines';
+
+  var dueRows = rowObjects.filter(function(rowObject) {
+    if (rowObject !== undefined) {
+      var dueDate = new Date(rowObject.dueDate);
+      if (
+        dueDate !== undefined &amp;&amp;
+        dateDiff_(today, dueDate) &lt;= warningDays &amp;&amp;
+        dateDiff_(dueDate, today) &lt; 1
+      ) {
+        return new Date(rowObject.dueDate);
+      }
+    }
+  });
+
+  var overdueRows = rowObjects.filter(function(rowObject) {
+    if (rowObject !== undefined) {
+      var dueDate = new Date(rowObject.dueDate);
+      if (dueDate !== undefined &amp;&amp; dateDiff_(dueDate, today) >= 1) {
+        return new Date(rowObject.dueDate);
+      }
+    }
+  });
+
+  var overdueEmailMap = overdueRows.reduce(function(userObject, rowObject) {
+    var odUserEmail = rowObject.emailAddress;
+    if (!userObject[odUserEmail]) {
+      userObject[odUserEmail] = [];
+    }
+    userObject[odUserEmail].push(rowObject);
+    return userObject;
+  }, {});
+
+  var dueEmailMap = dueRows.reduce(function(userObject, rowObject) {
+    var dUserEmail = rowObject.emailAddress;
+    if (!userObject[dUserEmail]) {
+      userObject[dUserEmail] = [];
+    }
+    userObject[dUserEmail].push(rowObject);
+    return userObject;
+  }, {});
+  for (var userEmail in overdueEmailMap) {
+    if (overdueEmailMap.hasOwnProperty(userEmail)) {
+      var userRowObjects = overdueEmailMap[userEmail];
+      var projectNames = userRowObjects.map(function(rowObject) {
+        return (overdueBody +=
+          '&lt;tr>&lt;td>' +
+          rowObject.projectName +
+          '&lt;/td>&lt;td>' +
+          /** Takes the date, converts it to JSON format (YYYY-MM-DD) then rebuilds it as DD-MM-YYYY */
+          new Date(rowObject.dueDate)
+            .toJSON()
+            .slice(0, 10)
+            .split('-')
+            .reverse()
+            .join('/') +
+          '&lt;/tr>');
+      });
+      dueBody += htmlClose;
+      MailApp.sendEmail(userEmail, overdueSubject, '', {
+        noReply: true,
+        htmlBody: overdueBody,
+        CC: ccUser
+      });
+    }
+  }
+
+  for (var userEmail in dueEmailMap) {
+    if (dueEmailMap.hasOwnProperty(userEmail)) {
+      var userRowObjects = dueEmailMap[userEmail];
+      var projectNames = userRowObjects.map(function(rowObject) {
+        return (dueBody +=
+          '&lt;tr>&lt;td>' +
+          rowObject.projectName +
+          '&lt;/td>&lt;td>' +
+          /** Takes the date, converts it to JSON format (YYYY-MM-DD) then rebuilds it as DD-MM-YYYY */
+          new Date(rowObject.dueDate)
+            .toJSON()
+            .slice(0, 10)
+            .split('-')
+            .reverse()
+            .join('/') +
+          '&lt;/tr>');
+      });
+      dueBody += htmlClose;
+      MailApp.sendEmail(userEmail, dueSubject, '', {
+        noReply: true,
+        htmlBody: dueBody,
+        CC: ccUser
+      });
+    }
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-0%2520-%2520Helpers.html">0 - Helpers</a></li><li><a href="module-1%2520-%2520Snapshot.html">1 - Snapshot</a></li><li><a href="module-2%2520-%2520Mail%2520Alert.html">2 - Mail Alert</a></li><li><a href="module-3%2520-%2520Old%2520Code.html">3 - Old Code</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jan 29 2019 09:35:21 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

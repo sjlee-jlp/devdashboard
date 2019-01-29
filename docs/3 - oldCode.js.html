@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: 3 - oldCode.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: 3 - oldCode.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file This contains old code that was originally attached to the document.
+ * @author Unknown
+ * @version Unknown
+ * @module 3 - Old Code
+ */
+
+//function ArchiveAll(){
+//  ArchiveSchedule();
+//  ArchiveStatboard();
+//  cpuTrendData();
+//  ArchiveUpdates();
+//}
+//
+//
+//function cpuTrendData(){
+//
+//  cpuTrendDataCopy();
+//
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Current Project Updates'); // ss = source sheet
+//
+//
+//  //Get full range of data that we want to copy
+//  var slastRow = ss.getLastRow();
+//
+//  //copying first 8 columns
+//  var SRange = ss.getRange(6, 1, slastRow, 8).getValues();
+//
+//
+//
+//   //get the target sheet to copy data to
+//  var ts = sss.getSheetByName('CPU Trends');
+//
+//  //copying last updated date to the other sheet
+//  ts.getRange(2,1,slastRow, 8).setValues(SRange);
+//
+//
+//}
+//
+//function cpuTrendDataCopy(){
+//
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('CPU Trends'); // ss = source sheet
+//
+//
+//  //Get full range of data that we want to copy
+//  var slastRow = ss.getLastRow();
+//
+//  //copying first 8 columns
+//  var SRange = ss.getRange(2, 1, slastRow, 8).getValues();
+//
+//
+//
+//   //get the target sheet to copy data to
+//  var ts = sss.getSheetByName('CPU Trends LW');
+//
+//  //copying last updated date to the other sheet
+//  ts.getRange(2,1,slastRow, 8).setValues(SRange);
+//
+//
+//
+//
+//}
+//
+/////////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//function ArchiveUpdates() {
+//
+//
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Current Project Updates'); // ss = source sheet
+//
+//
+//  //Get full range of data that we want to copy
+//  var slastRow = ss.getLastRow();
+//
+//  //Set all values in first column of CPU sheet to current reporting period date
+//  var reportPeriod = ss.getRange(3,1).getValue();
+//  ss.getRange(6,1,slastRow).setValue(reportPeriod);
+//
+//  var SRange = ss.getRange(6, 1, slastRow, 28);
+//  //get A1 notation identifying the range (A6:AB*)
+//  var A1Range = SRange.getA1Notation();
+//  //get the data values in range
+//  var SData = SRange.getValues();
+//
+//  //get the target sheet to copy data to
+//  var ts = sss.getSheetByName('Archived Project Updates');
+//  //identify the last row with values in it
+//  var tLastRow = ts.getLastRow();
+//
+//
+//  //set the target range to the values of the source data
+//  ts.getRange((tLastRow + 1),1, slastRow, 28).setValues(SData);
+//
+//
+//  deleteCompleteRows();
+//  removeEmptyRows();
+//
+//  //ss.deleteRows(6, slastRow);
+//
+//}
+//
+///////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//function ArchiveSchedule() {
+//
+//
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Red/Amber Schedule (Latest)'); // ss = source sheet
+//
+//  var SRange = ss.getRange(16, 4, 42, 12);
+//  //get A1 notation identifying the range (D16:L42)
+//  var A1Range = SRange.getA1Notation();
+//  //get the data values in range
+//  var SData = SRange.getValues();
+//  var sBG = SRange.getBackgrounds();
+//  var sWR = SRange.getWraps();
+//  var sFC = SRange.getFontColors();
+//
+//
+//  //get the target sheet to copy data to
+//  var ts = sss.getSheetByName('Red/Amber Archive');
+//  //identify the last row with values in it
+//  var tLastRow = ts.getLastRow();
+//
+//
+//  //set the target range to the values of the source data
+//  ts.getRange((tLastRow + 2),1, 42, 12).setValues(SData)
+//  .setBackgrounds(sBG)
+//  .setFontColors(sFC)
+//  .setWrap(false);
+//
+//
+//  //ss.deleteRows(6, slastRow);
+//
+//}
+//
+//
+///////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//
+//function ArchiveAPU(){
+//
+//
+//  //Creating a new file, this file will proceed to store the 'Archived Project Updates'
+//  var name = (new Date()).toLocaleDateString() + ' Archived Project Updates'
+//  var folderId = '0BwUMoQOvsVLmWGswREF4YjRjM2s'
+//  var resource = {
+//    title: name,
+//    mimeType: MimeType.GOOGLE_SHEETS,
+//    parents: [{ id: folderId }]
+//  }
+//  var fileJson = Drive.Files.insert(resource)
+//  var fileId = fileJson.id;
+//
+//
+//  //Now we get the sheet 'Archived Project Updates' from the main sheet and we copy it over to the new spreadsheet we just created above
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Archived Project Updates'); // ss = source sheet
+//
+//  var slastRow = ss.getLastRow();
+//  var range = ss.getRange(4, 1, slastRow, 28); //assign the range you want to copy
+//
+//  //getting formatting and data from the range
+//  var data = range.getValues();
+//  var sBG = range.getBackgrounds();
+//  var sFC = range.getFontColors();
+//  var sFF = range.getFontFamilies();
+//  var sFL = range.getFontLines();
+//  var sFFa = range.getFontFamilies();
+//  var sFSz = range.getFontSizes();
+//  var sFSt = range.getFontStyles();
+//  var sFW = range.getFontWeights();
+//  var sHA = range.getHorizontalAlignments();
+//  var sVA = range.getVerticalAlignments();
+//  var sNF = range.getNumberFormats();
+//  var sWR = range.getWraps();
+//
+//  //getting the target sheet data so we can store data in it
+//  var sssId = SearchFiles(name);
+//  var tss = SpreadsheetApp.openById(sssId);
+//  var ts = tss.getSheetByName('Sheet1');
+//
+//  //adding the data from the source range to the new sheet, including formatting
+//  ts.getRange(1,1, slastRow, 28).setValues(data)
+//  .setBackgrounds(sBG)
+//  .setFontColors(sFC)
+//  .setFontFamilies(sFF)
+//  .setFontLines(sFL)
+//  .setFontFamilies(sFFa)
+//  .setFontSizes(sFSz)
+//  .setFontStyles(sFSt)
+//  .setFontWeights(sFW)
+//  .setHorizontalAlignments(sHA)
+//  .setVerticalAlignments(sVA)
+//  .setNumberFormats(sNF)
+//  .setWraps(sWR);
+//
+//}
+//
+///////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//
+//function SearchFiles(name) {
+//  //this will have a look for a file with an exact match to the parameter "name"
+//  var searchFor ='title contains "' + name + '"';
+//  var name;
+//  var fileId;
+//  var files = DriveApp.searchFiles(searchFor);
+//  while (files.hasNext()) {
+//    var file = files.next();
+//    fileId = file.getId();// To get FileId of the file
+//    name = file.getName();
+//  }
+//
+//  return fileId;
+//}
+//
+//
+///////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//
+//
+//function deleteCompleteRows() {
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Current Project Updates'); // ss = source sheet
+//
+//  var rows = ss.getDataRange();
+//  var numRows = rows.getNumRows();
+//  var values = rows.getValues();
+//
+//  var rowsDeleted = 0;
+//  for (var i = 0; i &lt;= numRows - 1; i++) {
+//    var row = values[i];
+//    if (row[13] == 'Complete') { // This searches all cells in columns A (change to row[1] for columns B and so on) and deletes row if cell is empty or has value 'delete'.
+//      ss.deleteRow((parseInt(i)+1) - rowsDeleted);
+//      rowsDeleted++;
+//    }
+//  }
+//}
+//
+//
+///////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//
+////Remove All Empty Rows in the Entire Workbook
+//function removeEmptyRows() {
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Current Project Updates'); // ss = source sheet
+//
+//  var maxRows = ss.getMaxRows();
+//  var lastRow = ss.getLastRow();
+//  if (maxRows-lastRow != 0){
+//    ss.deleteRows(lastRow+1, maxRows-lastRow);
+//  }
+//}
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//function ArchiveStatboard() {
+//
+//
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Stat Dashboard'); // ss = source sheet
+//
+//  var SRange = ss.getRange(10, 12);
+//  //get the data values in range
+//  var SData = SRange.getValues();
+//
+//  var ARange = ss.getRange(5,15);
+//  var AData = ARange.getValues();
+//
+//  //get the target sheet to copy data to
+//  var ts = sss.getSheetByName('Statboard History');
+//  //identify the last row with values in it
+//  var tLastRow = ts.getLastRow();
+//
+//
+//  //set the target range to the values of the source data
+//  ts.getRange((tLastRow + 1),2).setValues(SData);
+//  ts.getRange((tLastRow + 1),3).setValues(AData);
+//
+//
+//}
+//
+//
+//
+//
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//
+//
+//function getDate(){
+//  var sss = SpreadsheetApp.openById('1s1cPEMRBCHB-DvN5jtziYchwI3ei7LWXDYhC_a_YkMc'); // sss = source spreadsheet
+//  var ss = sss.getSheetByName('Stat Dashboard'); // ss = source sheet
+//
+//  var SRange = ss.getRange(8, 6);
+//  //get the data values in range
+//  var SData = SRange.getValues();
+//
+//    //get the target sheet to copy data to
+//  var ts = sss.getSheetByName('Statboard History');
+//  //identify the last row with values in it
+//  var tLastRow = ts.getLastRow();
+//
+//
+//  //set the target range to the values of the source data
+//  ts.getRange((tLastRow + 1),1).setValues(SData);
+//
+//}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-0%2520-%2520Helpers.html">0 - Helpers</a></li><li><a href="module-1%2520-%2520Snapshot.html">1 - Snapshot</a></li><li><a href="module-2%2520-%2520Mail%2520Alert.html">2 - Mail Alert</a></li><li><a href="module-3%2520-%2520Old%2520Code.html">3 - Old Code</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jan 29 2019 09:35:21 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
