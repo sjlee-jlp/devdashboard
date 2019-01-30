@@ -217,8 +217,8 @@ function reset_(e) {
  *
  * @author Simon Lee &lt;simon.lee@johnlewis.co.uk>
  * @example &lt;&lt;caption>Example usage of buildMailAddress_()&lt;/caption>
- * // returns john.lewis@johnlewis.co.uk
- * buildMailAddress_("John Lewis")
+ * // returns some.user@somedomain.co.uk
+ * buildMailAddress_("Some User")
  * @param {String} user The users first name and last name
  * @return {string} Returns the email address for the user
  */
@@ -227,7 +227,7 @@ function buildMailAddress_(user) {
   var nameSplit = fullName.split(' ');
   var firstName = nameSplit[0];
   var lastName = nameSplit[1];
-  return firstName + '.' + lastName + '@johnlewis.co.uk';
+  return firstName + '.' + lastName + '@somedomain.co.uk';
 }
 
 /**
